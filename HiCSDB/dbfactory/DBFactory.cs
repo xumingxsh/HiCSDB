@@ -7,35 +7,20 @@ namespace Xumingxsh.DB
     /// </summary>
     internal class DBFactory
     {
-        /// <summary>
-        /// SQL SERVER
-        /// </summary>
-        public const int MSSQLSERVER = 1;
-
-        /// <summary>
-        /// MySQL数据库。
-        /// </summary>
-        public const int MySQL = 4;
-
-        /// <summary>
-        /// Oracle数据库。
-        /// </summary>
-        public const int ORACLE = 6;
-
         public static IDBCreator GetCreator(int type)
         {
 
             switch (type)
             {
-                case DBFactory.MSSQLSERVER:
+                case DBOperate.MSSQLSERVER:
                     {
                         return new SqlServerCreator();
                     }
-                case DBFactory.MySQL:
+                case DBOperate.MySQL:
                     {
                         return new MySQLCreator();
                     }
-                case DBFactory.ORACLE:
+                case DBOperate.ORACLE:
                     {
                         return new OracleCreator();
                     }
