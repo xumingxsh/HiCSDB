@@ -7,10 +7,11 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Collections;
 using System.Transactions;
 
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// 数据库操作抽象类。
@@ -120,12 +121,13 @@ namespace Xumingxsh.DB
         public void OnTran(TransHandler handler)
         {
             DBOperate db = null;
-            using (TransactionScope scope = new TransactionScope())
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
             {
                 db = new DBOperate(connString, dbType, false);
                 if (handler(db))
                 {
                     scope.Complete();
+                    scope.Dispose();
                 }
                 //db.Close();
             }

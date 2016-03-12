@@ -10,7 +10,7 @@ using System.Data;
 using System.Data.Common;
 
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// 数据库操作抽象类。
@@ -111,14 +111,15 @@ namespace Xumingxsh.DB
             //初始化一个DataAdapter对象，一个DataTable对象
             DataTable dt = new DataTable();
             DbDataAdapter da = this.CreateDataAdapter(sql);
-
+            AddCmdParaers(da.SelectCommand, parameters);
+            /*
             //初始化一个command对象
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);
+            DbCommand cmdSql = this.GetPreCommand(sql, parameters);*/
 
             try
             {
                 //返回DataTable对象
-                da.SelectCommand = cmdSql;
+                //da.SelectCommand = cmdSql;
 
                 // 打开数据库连接
                 this.Open();
@@ -128,7 +129,7 @@ namespace Xumingxsh.DB
             }
             finally
             {
-                OnExecuteFinish(cmdSql);
+                OnExecuteFinish(da.SelectCommand);
             }
         }
 
@@ -146,15 +147,10 @@ namespace Xumingxsh.DB
             //初始化一个DataSet对象，一个DataAdapter对象
             DataSet ds = new DataSet();
             DbDataAdapter da = this.CreateDataAdapter(sql);
-
-            //初始化一个command对象
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);
+            AddCmdParaers(da.SelectCommand, parameters);
 
             try
             {
-                // 返回DataSet对象
-                da.SelectCommand = cmdSql;
-
                 // 打开数据库连接
                 this.Open();
                 da.Fill(ds);
@@ -162,7 +158,7 @@ namespace Xumingxsh.DB
             }
             finally
             {
-                OnExecuteFinish(cmdSql);
+                OnExecuteFinish(da.SelectCommand);
             }
         }
     }

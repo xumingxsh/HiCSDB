@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     internal class UtilHelper
     {     
@@ -26,7 +26,8 @@ namespace Xumingxsh.DB
                 if (topText.Equals("UPDATE ") || topText.Equals("INSERT ") ||
                     topText.Equals("DELETE ") || topText.Equals("ALTER T") ||
                     topText.Equals("ALTER  ") || topText.Equals("BACKUP ") ||
-                    topText.Equals("RESTORE") || topText.Equals("SELECT "))
+                    topText.Equals("RESTORE") || topText.Equals("SELECT ") ||
+                    topText.Equals("CREATE ") || topText.Equals("DROP TA"))
                 {
                     return CommandType.Text;
                 }

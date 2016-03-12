@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// 根据给定对象生成参数数组的辅助类

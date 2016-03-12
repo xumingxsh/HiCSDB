@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// 数据库对象创建器的生产工厂

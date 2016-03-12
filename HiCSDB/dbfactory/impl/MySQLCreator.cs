@@ -9,7 +9,7 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using System.Data.Common;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// SqlServer数据库操作实现。

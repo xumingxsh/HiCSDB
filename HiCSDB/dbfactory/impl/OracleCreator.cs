@@ -9,7 +9,7 @@ using System.Data;
 using System.Data.OracleClient;
 using System.Data.Common;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     internal sealed class OracleCreator : IDBCreator
     {

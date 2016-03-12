@@ -10,7 +10,7 @@ using System.Data.OleDb;
 using System.Data;
 using System.Data.Common;
 
-namespace Xumingxsh.DB 
+namespace HiCSDB 
 {
     internal sealed class SqlServerCreator : IDBCreator 
 	{

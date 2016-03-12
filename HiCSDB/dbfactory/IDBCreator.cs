@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// ADO.NET对象创建接口

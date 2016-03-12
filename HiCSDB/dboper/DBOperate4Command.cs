@@ -11,7 +11,7 @@ using System.Data;
 using System.Data.Common;
 
 
-namespace Xumingxsh.DB
+namespace HiCSDB
 {
     /// <summary>
     /// 数据库操作抽象类。
@@ -20,6 +20,24 @@ namespace Xumingxsh.DB
     /// <log date="2007-04-05">创建</log>
     partial class DBOperate
     {
+        /// <summary>
+        /// 向命令对象添加参数
+        /// </summary>
+        /// <param name="cmd">命令对象</param>
+        /// <param name="parameters">参数数组</param>
+        private void AddCmdParaers(DbCommand cmd, DbParameter[] parameters)
+        {
+            if (parameters == null)
+            {
+                return;
+            }
+
+            //指定各个参数的取值
+            foreach (DbParameter sqlParm in parameters)
+            {
+                cmd.Parameters.Add(sqlParm);
+            }
+        }
         /// <summary>
         /// 获取一个OdbcCommand对象
         /// </summary>
@@ -35,14 +53,7 @@ namespace Xumingxsh.DB
 
             cmdSql.CommandType = UtilHelper.GetCommandType(sql);
 
-            if (parameters != null)
-            {
-                //指定各个参数的取值
-                foreach (DbParameter sqlParm in parameters)
-                {
-                    cmdSql.Parameters.Add(sqlParm);
-                }
-            }
+            AddCmdParaers(cmdSql, parameters);
 
             return cmdSql;
         }

@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xumingxsh.DB;
+using HiCSDB;
 
 namespace HiCSDBTest
 {
@@ -46,7 +46,7 @@ namespace HiCSDBTest
                 try
                 {
                     int result = op.ExecuteNonQuery("insert into tables() where table_name='CHARACTER_SETS'");
-                    Assert.IsTrue(result == 1);
+        Assert.IsTrue(result == 1);
                 }
                 catch(Exception ex)
                 {
@@ -57,7 +57,78 @@ namespace HiCSDBTest
             object ret = db.ExecuteScalar("Select Count(1) from tables where table_name='CHARACTER_SETS'");
             Assert.IsTrue(Convert.ToInt16(ret) == 1);
         }
-        
+
+        /// <summary>
+        /// 测试多数据插入
+        /// </summary>
+        [TestMethod] 
+        public void Test_ExcuteTrans_Mulity()
+        {
+            string conn = "Server=127.0.0.1;port=3306;Database=test;Uid=root;Pwd=root;";
+            string sql = @"CREATE TABLE mulity_test(
+	id int not null auto_increment,
+	name varchar(50) not null,
+	typeid int NOT NULL,
+   primary key (id)
+) ";
+
+            string insert = "insert into mulity_test(name,typeid) values('this is a test{0}',3)";
+            string delete = "delete from mulity_test";
+            string drop = "drop table if exists mulity_test";
+            string count_sql = "select count(1) from mulity_test";
+            string info = "insert {0} to table({1}),time span:{2}";
+            DBOperate db = new DBOperate(conn, DBOperate.MySQL, false);
+            int ret = db.ExecuteNonQuery(drop);
+            ret = db.ExecuteNonQuery(sql);
+            object val = db.ExecuteScalar("select count(1) from mulity_test where id=0");
+            Assert.IsTrue(Convert.ToInt32(val) == 0);
+
+            DateTime dt;
+            DateTime dt2;
+            int count = 500;
+           /*
+            dt = DateTime.Now;
+            for (int i = 0; i < count; i++)
+            {
+                db.ExecuteNonQuery(string.Format(sql, i));
+            }
+            sql = "select count(1) from mulity_test";
+            val = db.ExecuteScalar(sql);
+            dt2 = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine(
+                "insert {0} to table(not in Transaction),time span:{1}", 
+                Convert.ToInt32(val), dt2 - dt);
+            db.ExecuteNonQuery("delete from mulity_test  where id != 0");*/
+            db.Close();
+            dt = DateTime.Now;
+            db.OnTran((DBOperate op) =>
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    op.ExecuteNonQuery(string.Format(insert, i));
+                }
+                return true;
+            });
+            val = db.ExecuteScalar(count_sql);
+            dt2 = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine(
+                info, "in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+            db.ExecuteNonQuery(delete);
+            dt = DateTime.Now;
+            for (int i = 0; i < count; i++)
+            {
+                db.ExecuteNonQuery(string.Format(insert, i));
+            }
+            val = db.ExecuteScalar(count_sql);
+            dt2 = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine(
+                info, "not in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+            db.ExecuteNonQuery(drop);
+            db.Close();
+        }
+
         [TestMethod]
         public void Test_Params()
         {
