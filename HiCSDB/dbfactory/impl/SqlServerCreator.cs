@@ -24,13 +24,19 @@ namespace HiCSDB
             return new SqlDataAdapter(sql, (SqlConnection)conn);
         }
 
+        public DbDataAdapter CreateDataAdapter()
+        {
+            return new SqlDataAdapter();
+        }
+
         public DbParameter CreateParameter(string name, object value)
         {
-            if (value == null)
-            {
-                return new SqlParameter(name, System.DBNull.Value);
-            }
-            return new SqlParameter(name, value);
+            return DBCreatorHelper.CreateParameter<SqlParameter>(name, value);
+        }
+
+        public DbParameter CreateParameter4DataTable(string name, string source)
+        {
+            return DBCreatorHelper.CreateParameter4DataTable<SqlParameter>(name, source);
         }
 	}
 }

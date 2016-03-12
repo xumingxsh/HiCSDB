@@ -23,13 +23,19 @@ namespace HiCSDB
             return new OracleDataAdapter(sql, (OracleConnection)conn);
         }
 
+        public DbDataAdapter CreateDataAdapter()
+        {
+            return new OracleDataAdapter();
+        }
+
         public DbParameter CreateParameter(string name, object value)
         {
-            if (value == null)
-            {
-                return new OracleParameter(name, System.DBNull.Value);
-            }
-            return new OracleParameter(name, value);
+            return DBCreatorHelper.CreateParameter<OracleParameter>(name, value);
+        }
+
+        public DbParameter CreateParameter4DataTable(string name, string source)
+        {
+            return DBCreatorHelper.CreateParameter4DataTable<OracleParameter>(name, source);
         }
     }
 }

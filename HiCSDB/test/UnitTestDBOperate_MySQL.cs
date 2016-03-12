@@ -58,6 +58,108 @@ namespace HiCSDBTest
             Assert.IsTrue(Convert.ToInt16(ret) == 1);
         }
 
+        [TestMethod]
+        public void Test_Batch()
+        {
+            string conn = "Server=127.0.0.1;port=3306;Database=test;Uid=root;Pwd=root;";
+            string sql = @"CREATE TABLE mulity_test(
+	id int not null auto_increment,
+	name varchar(50) not null,
+	typeid int NOT NULL,
+   primary key (id)
+) ";
+
+            string drop = "drop table if exists mulity_test";
+            string count_sql = "select count(1) from mulity_test";
+            string info = "insert {0} to table({1}),time span:{2}";
+            string delete = "delete from mulity_test";
+            string insert_format = "insert into mulity_test(name,typeid) values(@name,@typeid)";
+            string update_format = "update mulity_test set name=@name where typeid=@typeid";
+            string count_update = "select Count(1) from mulity_test where name like '%_XXXXX'";
+            DBOperate db = new DBOperate(conn, DBOperate.MySQL, false);
+            int ret = db.ExecuteNonQuery(drop);
+            ret = db.ExecuteNonQuery(sql);
+            object val = db.ExecuteScalar("select count(1) from mulity_test where id=0");
+            Assert.IsTrue(Convert.ToInt32(val) == 0);
+
+            DateTime dt;
+            DateTime dt2;
+            int count = 500;
+            db.Close();
+            dt = DateTime.Now;
+
+            db.ExecuteNonQuery(delete);
+
+            DataTable dtable = new DataTable();
+            dtable.Columns.Add("name");
+            dtable.Columns.Add("typeid");
+            for (int i = 0; i < count; i++)
+            {
+                DataRow dr = dtable.NewRow();
+                dr["name"] = "this is a test" + i;
+                dr["typeid"] = i;
+                dtable.Rows.Add(dr);
+            }
+
+            DataTable dTable2 = new DataTable();
+            dTable2.Columns.Add("name");
+            dTable2.Columns.Add("typeid");
+            for (int i = 0; i < count; i++)
+            {
+                DataRow dr = dTable2.NewRow();
+                dr["name"] = "this is a test" + i + "_XXXXX";
+                dr["typeid"] = i;
+                dTable2.Rows.Add(dr);
+            }
+
+            db.Close();
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["@name"] = "name";
+            dic["@typeid"] = "typeid";
+            dt = DateTime.Now;
+            db.BatchUpdate(dtable, insert_format, dic);
+            dt2 = DateTime.Now;
+            val = db.ExecuteScalar(count_sql);
+            System.Diagnostics.Debug.WriteLine(
+                info, "batch insert not in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+
+            dt = DateTime.Now;
+            db.BatchUpdate(dTable2, update_format, dic);
+            dt2 = DateTime.Now;
+            val = db.ExecuteScalar(count_update);
+            System.Diagnostics.Debug.WriteLine(
+                info, "batch update not in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+            db.ExecuteNonQuery(delete);
+            dt = DateTime.Now;
+            db.OnTran((DBOperate op) =>
+            {
+                op.BatchUpdate(dtable, insert_format, dic);
+                return true;
+            });
+            dt2 = DateTime.Now;
+            val = db.ExecuteScalar(count_sql);
+            System.Diagnostics.Debug.WriteLine(
+                info, "batch insert in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+            dt = DateTime.Now;
+
+            db.OnTran((DBOperate op) =>
+            {
+                op.BatchUpdate(dTable2, update_format, dic);
+                return true;
+            });
+            dt2 = DateTime.Now;
+            val = db.ExecuteScalar(count_update);
+            System.Diagnostics.Debug.WriteLine(
+                info, "batch update in Transaction", Convert.ToInt32(val), dt2 - dt);
+
+            db.ExecuteNonQuery(drop);
+            db.Close();
+        }
+
         /// <summary>
         /// 测试多数据插入
         /// </summary>
@@ -72,7 +174,7 @@ namespace HiCSDBTest
    primary key (id)
 ) ";
 
-            string insert = "insert into mulity_test(name,typeid) values('this is a test{0}',3)";
+            string insert = "insert into mulity_test(name,typeid) values('this is a test{0}',{0})";
             string delete = "delete from mulity_test";
             string drop = "drop table if exists mulity_test";
             string count_sql = "select count(1) from mulity_test";
@@ -86,19 +188,6 @@ namespace HiCSDBTest
             DateTime dt;
             DateTime dt2;
             int count = 500;
-           /*
-            dt = DateTime.Now;
-            for (int i = 0; i < count; i++)
-            {
-                db.ExecuteNonQuery(string.Format(sql, i));
-            }
-            sql = "select count(1) from mulity_test";
-            val = db.ExecuteScalar(sql);
-            dt2 = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine(
-                "insert {0} to table(not in Transaction),time span:{1}", 
-                Convert.ToInt32(val), dt2 - dt);
-            db.ExecuteNonQuery("delete from mulity_test  where id != 0");*/
             db.Close();
             dt = DateTime.Now;
             db.OnTran((DBOperate op) =>
@@ -124,7 +213,7 @@ namespace HiCSDBTest
             dt2 = DateTime.Now;
             System.Diagnostics.Debug.WriteLine(
                 info, "not in Transaction", Convert.ToInt32(val), dt2 - dt);
-
+                    
             db.ExecuteNonQuery(drop);
             db.Close();
         }

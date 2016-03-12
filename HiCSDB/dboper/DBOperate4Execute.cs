@@ -5,9 +5,10 @@
 /// <log date="2007-04-05">创建</log>
 
 using System;
-using System.Collections;
 using System.Data;
 using System.Data.Common;
+using System.Collections;
+using System.Collections.Generic;
 
 
 namespace HiCSDB
@@ -159,6 +160,72 @@ namespace HiCSDB
             finally
             {
                 OnExecuteFinish(da.SelectCommand);
+            }
+        }
+
+        public void BatchUpdate(DataTable dt, string sql, IDictionary<string, string> paramers)
+        {
+            // 初始化一个command对象
+            DbCommand cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+
+            cmd.CommandType = UtilHelper.GetCommandType(sql);
+
+            //指定各个参数的取值
+            foreach (var it in paramers)
+            {
+                DbParameter param = creator.CreateParameter4DataTable(it.Key, it.Value);
+                cmd.Parameters.Add(param);
+            }
+
+            DbDataAdapter adapter = creator.CreateDataAdapter();
+
+
+            bool isAdd = false;
+            sql = sql.ToLower().Trim();
+            if (sql.StartsWith("insert "))
+            {
+                adapter.InsertCommand = cmd;
+                isAdd = true;
+            }
+            else if (sql.StartsWith("update "))
+            {
+                adapter.UpdateCommand = cmd;
+            }
+            else
+            {
+                throw new Exception("BatchUpdate function support sql start with insert or update");
+            }
+
+            foreach (DataRow it in dt.Rows)
+            {
+                it.AcceptChanges();
+                if (isAdd)
+                {
+                    it.SetAdded();
+                }
+                else
+                {
+                    it.SetModified();
+                }
+            }
+            try
+            {
+                //执行更新
+                adapter.Update(dt.GetChanges());
+                //使DataTable保存更新
+                dt.AcceptChanges();
+            }
+            finally
+            {
+                if (isAdd)
+                {
+                    OnExecuteFinish(adapter.InsertCommand);
+                }
+                else
+                {
+                    OnExecuteFinish(adapter.UpdateCommand);
+                }
             }
         }
     }
