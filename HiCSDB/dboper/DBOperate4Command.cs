@@ -45,10 +45,10 @@ namespace HiCSDB
         /// <param name="parameters">参数数组</param>
         /// <param name="strCommandType">命令类型</param>
         /// <returns>OdbcCommand对象</returns>
-        private DbCommand GetPreCommand(string sql, DbParameter[] parameters)
+        private DbCommand GetPreCommand(DbConnection connection, string sql, DbParameter[] parameters)
         {
             // 初始化一个command对象
-            DbCommand cmdSql = conn.CreateCommand();
+            DbCommand cmdSql = connection.CreateCommand();
             cmdSql.CommandText = sql;
 
             cmdSql.CommandType = UtilHelper.GetCommandType(sql);
@@ -63,9 +63,9 @@ namespace HiCSDB
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        private DbDataAdapter CreateDataAdapter(string sql)
+        private DbDataAdapter CreateDataAdapter(DbConnection connection, string sql)
         {
-            return creator.CreateDataAdapter(conn, sql);
+            return creator.CreateDataAdapter(connection, sql);
         }
 
         /// <summary>

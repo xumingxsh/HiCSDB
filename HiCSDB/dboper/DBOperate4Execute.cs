@@ -20,9 +20,9 @@ namespace HiCSDB
     /// <log date="2007-04-05">创建</log>
     partial class DBOperate
     {
-        private void OnExecuteFinish(DbCommand cmdSql)
+        private void OnExecuteFinish(DbConnection connection, DbCommand cmdSql)
         {
-            this.CloseAfterExecute();
+            this.CloseAfterExecute(connection);
             cmdSql.Parameters.Clear();
         }
         /// <summary>
@@ -33,16 +33,18 @@ namespace HiCSDB
         /// <returns>受影响的条数</returns>
         public int ExecuteNonQuery(string sql, DbParameter[] parameters = null)
         {
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);
+			DbConnection connection = this.Conn;
+			
+            DbCommand cmdSql = this.GetPreCommand(connection, sql, parameters);
             try
             {
                 // 打开数据库连接
-                this.Open();
+                this.Open(connection);
                 return cmdSql.ExecuteNonQuery();
             }
             finally
             {
-                OnExecuteFinish(cmdSql);
+                OnExecuteFinish(connection, cmdSql);
             }
         }
 
@@ -56,18 +58,20 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public object ExecuteScalar(string sql, DbParameter[] parameters = null)
         {
+			DbConnection connection = this.Conn;
+				
             //初始化一个command对象
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);
+            DbCommand cmdSql = this.GetPreCommand(connection, sql, parameters);
 
             try
             {
                 // 打开数据库连接
-                this.Open();
+                this.Open(connection);
                 return cmdSql.ExecuteScalar();
             }
             finally
             {
-                OnExecuteFinish(cmdSql);
+                OnExecuteFinish(connection, cmdSql);
             }
         }
 
@@ -81,14 +85,16 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public IDataReader ExecuteReader(string sql, DbParameter[] parameters = null)
         {
+			DbConnection connection = this.Conn;
+			
             //初始化一个command对象
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);
+            DbCommand cmdSql = this.GetPreCommand(connection, sql, parameters);
 
             try
             {
 
                 // 打开数据库连接
-                this.Open();
+                this.Open(connection);
 
                 //返回DataReader对象
                 return cmdSql.ExecuteReader(CommandBehavior.CloseConnection);
@@ -111,26 +117,22 @@ namespace HiCSDB
         {
             //初始化一个DataAdapter对象，一个DataTable对象
             DataTable dt = new DataTable();
-            DbDataAdapter da = this.CreateDataAdapter(sql);
+			
+			DbConnection connection = this.Conn;			
+            DbDataAdapter da = this.CreateDataAdapter(connection, sql);
             AddCmdParaers(da.SelectCommand, parameters);
-            /*
-            //初始化一个command对象
-            DbCommand cmdSql = this.GetPreCommand(sql, parameters);*/
 
             try
             {
-                //返回DataTable对象
-                //da.SelectCommand = cmdSql;
-
                 // 打开数据库连接
-                this.Open();
+                this.Open(connection);
 
                 da.Fill(dt);
                 return dt;
             }
             finally
             {
-                OnExecuteFinish(da.SelectCommand);
+                OnExecuteFinish(connection, da.SelectCommand);
             }
         }
 
@@ -147,26 +149,30 @@ namespace HiCSDB
         {
             //初始化一个DataSet对象，一个DataAdapter对象
             DataSet ds = new DataSet();
-            DbDataAdapter da = this.CreateDataAdapter(sql);
+			
+			DbConnection connection = this.Conn;	
+            DbDataAdapter da = this.CreateDataAdapter(connection, sql);
             AddCmdParaers(da.SelectCommand, parameters);
 
             try
             {
                 // 打开数据库连接
-                this.Open();
+                this.Open(connection);
                 da.Fill(ds);
                 return ds;
             }
             finally
             {
-                OnExecuteFinish(da.SelectCommand);
+                OnExecuteFinish(connection, da.SelectCommand);
             }
         }
 
         public void BatchUpdate(DataTable dt, string sql, IDictionary<string, string> paramers)
         {
+			DbConnection connection = this.Conn;
+			
             // 初始化一个command对象
-            DbCommand cmd = conn.CreateCommand();
+            DbCommand cmd = connection.CreateCommand();
             cmd.CommandText = sql;
 
             cmd.CommandType = UtilHelper.GetCommandType(sql);
@@ -220,11 +226,11 @@ namespace HiCSDB
             {
                 if (isAdd)
                 {
-                    OnExecuteFinish(adapter.InsertCommand);
+                    OnExecuteFinish(connection, adapter.InsertCommand);
                 }
                 else
                 {
-                    OnExecuteFinish(adapter.UpdateCommand);
+                    OnExecuteFinish(connection, adapter.UpdateCommand);
                 }
             }
         }

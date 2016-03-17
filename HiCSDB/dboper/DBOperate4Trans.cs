@@ -10,7 +10,6 @@ using System.Data.Common;
 using System.Collections;
 using System.Transactions;
 
-
 namespace HiCSDB
 {
     /// <summary>
@@ -42,6 +41,96 @@ namespace HiCSDB
         /// <returns>true：成功，提交；false：失败，回滚</returns>
         public delegate bool TransHandler(DBOperate oper);
 
+        public DBOperate(string connStr, int iDBType, bool isCloseAfterExecute = true)
+        {
+            this.IsCloseAfterExecute = isCloseAfterExecute;
+            this.creator = DBFactory.GetCreator(iDBType);
+            this.connString = connStr;
+            this.dbType = iDBType;
+            this.conn = creator.CreateConn(connStr);
+        }
+
+        /// <summary>
+        /// 关闭数据库连接
+        /// </summary>
+        /// <author>天志</author>
+        /// <log date="2007-04-05">创建</log>
+        public void Close()
+        {
+			this.Close(conn);
+        }
+
+        /// <summary>
+        /// 执行事务（注意使用该函数会生成一个新的数据库操作对象病连接，在事务执行后，会关闭连接）
+        /// </summary>
+        /// <param name="handler">事务执行函数</param>
+        public void OnTran(TransHandler handler)
+        {
+            DBOperate db = null;
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
+            {
+                db = new DBOperate(connString, dbType, false);
+                if (handler(db))
+                {
+                    scope.Complete();
+                }
+            }
+            if (db != null)
+            {
+                db.Close();
+            }
+        }
+		
+		private DbConnection Conn
+		{
+			get
+			{
+				// 如果用完即关闭，则每次访问时，创建新的连接，
+				// 目的是避免多线程访问时，conn成员被多次打开，
+				// 或不该关闭时关闭  徐敏荣 2016-03-17
+				if (!this.IsCloseAfterExecute)
+				{
+					return conn;
+				}
+				else
+				{
+					DbConnection connection = creator.CreateConn(connString);
+					return connection;
+				}
+			}
+		}
+
+        private void CloseAfterExecute(DbConnection connection)
+        {
+            if (IsCloseAfterExecute)
+            {
+                this.Close(connection);
+            }
+        }
+
+        /// <summary>
+        /// 打开数据库连接
+        /// </summary>
+        /// <author>天志</author>
+        /// <log date="2007-04-05">创建</log>
+        private void Open(DbConnection connection)
+        {
+            if (connection.State.Equals(ConnectionState.Closed))
+            {
+                connection.Open();
+            }
+        }
+
+        /// <summary>
+        /// 关闭数据库连接
+        /// </summary>
+        /// <author>天志</author>
+        /// <log date="2007-04-05">创建</log>
+        private void Close(DbConnection connection)
+        {
+            if (connection.State.Equals(ConnectionState.Open)) { connection.Close(); }
+        }
+
         /// <summary>
         /// 数据库连接字符串
         /// </summary>
@@ -58,84 +147,16 @@ namespace HiCSDB
         private bool IsCloseAfterExecute = true;
 
         /// <summary>
-        /// ADO相关对象创建工具
-        /// </summary>
-        private IDBCreator creator = null;
-
-        public DBOperate(string connString, int iDBType, bool isCloseAfterExecute)
-        {
-            this.IsCloseAfterExecute = isCloseAfterExecute;
-            creator = DBFactory.GetCreator(iDBType);
-            this.connString = connString;
-            dbType = iDBType;
-            conn = creator.CreateConn(connString);
-        }
-
-        public DBOperate(string connString, int iDBType)
-            : this(connString, iDBType, true)
-        {
-        }
-
-        /// <summary>
         /// 数据库连接对象。
         /// </summary>
         /// <author>天志</author>
         /// <log date="2007-04-05">创建</log>
         private DbConnection conn = null;
 
-        private void CloseAfterExecute()
-        {
-            if (IsCloseAfterExecute)
-            {
-                this.Close();
-            }
-        }
-
         /// <summary>
-        /// 打开数据库连接
+        /// ADO相关对象创建工具
         /// </summary>
-        /// <author>天志</author>
-        /// <log date="2007-04-05">创建</log>
-        private void Open()
-        {
-            if (conn.State.Equals(ConnectionState.Closed))
-            {
-                conn.Open();
-            }
-        }
-
-        /// <summary>
-        /// 关闭数据库连接
-        /// </summary>
-        /// <author>天志</author>
-        /// <log date="2007-04-05">创建</log>
-        public void Close()
-        {
-            if (conn.State.Equals(ConnectionState.Open)) { conn.Close(); }
-        }
-
-        /// <summary>
-        /// 执行事务（注意使用该函数会生成一个新的数据库操作对象病连接，在事务执行后，会关闭连接）
-        /// </summary>
-        /// <param name="handler">事务执行函数</param>
-        public void OnTran(TransHandler handler)
-        {
-            DBOperate db = null;
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
-            {
-                db = new DBOperate(connString, dbType, false);
-                if (handler(db))
-                {
-                    scope.Complete();
-                    scope.Dispose();
-                }
-                //db.Close();
-            }
-            if (db != null)
-            {
-                db.Close();
-            }
-        }
+        private IDBCreator creator = null;
     }
 }
 
