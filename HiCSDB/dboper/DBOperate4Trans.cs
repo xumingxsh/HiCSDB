@@ -25,6 +25,11 @@ namespace HiCSDB
         public const int MSSQLSERVER = 1;
 
         /// <summary>
+        /// OLEDB数据库。
+        /// </summary>
+        public const int OLEDB = 2;
+
+        /// <summary>
         /// MySQL数据库。
         /// </summary>
         public const int MySQL = 4;

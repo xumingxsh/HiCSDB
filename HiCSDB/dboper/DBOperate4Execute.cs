@@ -167,8 +167,18 @@ namespace HiCSDB
             }
         }
 
+        /// <summary>
+        /// 批量更新
+        /// </summary>
+        /// <param name="dt">存储数据的DataTable</param>
+        /// <param name="sql">SQL模板（含参数）</param>
+        /// <param name="paramers">SQL参数与DataTable列的对应集合</param>
         public void BatchUpdate(DataTable dt, string sql, IDictionary<string, string> paramers)
         {
+            if (dt == null || sql == null)
+            {
+                return;
+            }
 			DbConnection connection = this.Conn;
 			
             // 初始化一个command对象
@@ -188,13 +198,13 @@ namespace HiCSDB
 
 
             bool isAdd = false;
-            sql = sql.ToLower().Trim();
-            if (sql.StartsWith("insert "))
+            string lowSql = sql.ToLower().Trim();
+            if (lowSql.StartsWith("insert "))
             {
                 adapter.InsertCommand = cmd;
                 isAdd = true;
             }
-            else if (sql.StartsWith("update "))
+            else if (lowSql.StartsWith("update "))
             {
                 adapter.UpdateCommand = cmd;
             }

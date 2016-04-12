@@ -24,6 +24,10 @@ namespace HiCSDB
                     {
                         return new OracleCreator();
                     }
+                case DBOperate.OLEDB:
+                    {
+                        return new OleDBCreator();
+                    }
                 default:
                     {
                         return new MySQLCreator();

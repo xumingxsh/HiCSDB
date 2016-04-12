@@ -37,10 +37,10 @@ namespace HiCSDB
         /// <summary>
         /// 根据数据字典生成参数数组
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="dict"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="db">生成参数数组的对象</param>
+        /// <param name="dict">存储参数对象的字典</param>
+        /// <returns>参数数组</returns>
         public static DbParameter[] CreateParameters<T>(DBOperate db, IDictionary<string, T> dict)
         {
             int count = dict.Count;
@@ -61,21 +61,21 @@ namespace HiCSDB
         /// <summary>
         /// 为不支持的类提供异常处理
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="db"></param>
-        /// <param name="dr"></param>
-        /// <returns></returns>
-        public static DbParameter[] CreateParameters<T>(DBOperate db, T dr)
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="db">生成参数数组的对象</param>
+        /// <param name="t">包含生成参数数组所需属性的对象</param>
+        /// <returns>参数数组</returns>
+        public static DbParameter[] CreateParameters<T>(DBOperate db, T t)
         {
-            throw new Exception("this type for CreateParameters is not support");
+            throw new NotImplementedException("this type for CreateParameters is not support");
         }
 
         /// <summary>
         /// 根据DataRow生成参数数组。
         /// </summary>
-        /// <param name="paramDict"></param>
-        /// <param name="dr"></param>
-        /// <returns></returns>
+        /// <param name="db">创建参数的对象</param>
+        /// <param name="dr">包含参数的DataRow</param>
+        /// <returns>参数数组</returns>
         public static DbParameter[] CreateParameters(DBOperate db, DataRow dr)
         {
             if (dr == null)
@@ -103,9 +103,9 @@ namespace HiCSDB
         /// <summary>
         /// 根据DataTable生成参数数组（只使用第一行）
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="dt"></param>
-        /// <returns></returns>
+        /// <param name="db">生成参数的对象</param>
+        /// <param name="dt">包含参数的DayaTable，只取第一行</param>
+        /// <returns>参数数组</returns>
         public static DbParameter[] CreateParameters(DBOperate db, DataTable dt)
         {
             if (dt == null || dt.Rows.Count < 1)

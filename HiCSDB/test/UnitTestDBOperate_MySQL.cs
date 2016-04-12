@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using HiCSDB;
 
 namespace HiCSDBTest
@@ -303,6 +304,13 @@ namespace HiCSDBTest
                 ex.ToString();
                 Assert.IsTrue(true);
             }
+        }
+
+        [TestMethod]
+        public void Test_ExcelQuery()
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory + "/edqdb.xlsx";
+            Debug.WriteLine(path);
         }
     }
 }
