@@ -36,7 +36,14 @@ namespace HiCSDB
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        DbParameter CreateParameter(string name, object value);
+        DbParameter CreateParameter(string name, object value, bool isOut = false);
+
+        /// <summary>
+        /// 创建参数对象
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        DbParameter CreateParameter(string name);
 
         /// <summary>
         /// 创建参数对象
@@ -49,11 +56,23 @@ namespace HiCSDB
 
     internal static class DBCreatorHelper
     {
-        public static T CreateParameter<T>(string name, object value) where T : DbParameter,new()
+        public static T CreateParameter<T>(string name, object value, bool isOut) where T : DbParameter,new()
         {
             T t = new T();
             t.ParameterName = name;
             t.Value = (value == null ? System.DBNull.Value : value);
+
+            if (isOut)
+            {
+                t.Direction = System.Data.ParameterDirection.InputOutput;
+            }
+            return t;
+        }
+        public static T CreateParameter<T>(string name) where T : DbParameter, new()
+        {
+            T t = new T();
+            t.ParameterName = name;
+            t.Direction = System.Data.ParameterDirection.Output;
             return t;
         }
         public static T CreateParameter4DataTable<T>(string name, string source) where T : DbParameter, new()

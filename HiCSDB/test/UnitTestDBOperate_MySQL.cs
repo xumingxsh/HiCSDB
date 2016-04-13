@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 using HiCSDB;
 
 namespace HiCSDBTest
@@ -309,8 +308,12 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_ExcelQuery()
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "/edqdb.xlsx";
-            Debug.WriteLine(path);
+            string path = AppDomain.CurrentDomain.BaseDirectory + "/edqdb.xls";
+            string conn = "Provider=Microsoft.Jet.OLEDB.4.0;Extended Properties=Excel 8.0;data source=" + path;
+            DBOperate db = new DBOperate(conn, DBOperate.OLEDB);
+
+            DataTable dt = db.ExecuteDataTable("Select * from [ProductProcess$]");
+            Assert.IsTrue(dt.Rows.Count > 0);
         }
     }
 }

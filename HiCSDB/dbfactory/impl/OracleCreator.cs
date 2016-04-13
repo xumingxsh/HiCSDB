@@ -28,9 +28,13 @@ namespace HiCSDB
             return new OracleDataAdapter();
         }
 
-        public DbParameter CreateParameter(string name, object value)
+        public DbParameter CreateParameter(string name, object value, bool isOut = false)
         {
-            return DBCreatorHelper.CreateParameter<OracleParameter>(name, value);
+            return DBCreatorHelper.CreateParameter<OracleParameter>(name, value, isOut);
+        }
+        public DbParameter CreateParameter(string name)
+        {
+            return DBCreatorHelper.CreateParameter<OracleParameter>(name);
         }
 
         public DbParameter CreateParameter4DataTable(string name, string source)

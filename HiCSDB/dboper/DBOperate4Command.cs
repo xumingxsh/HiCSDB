@@ -75,9 +75,19 @@ namespace HiCSDB
         /// <param name="value"></param>
         /// <param name="isOut"></param>
         /// <returns></returns>
-        public DbParameter CreateParameter(string name, object value)
+        public DbParameter CreateParameter(string name, object value, bool isOut = false)
         {
-            return creator.CreateParameter(name, value);
+            return creator.CreateParameter(name, value, isOut);
+        }
+
+        /// <summary>
+        /// 生成参数。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public DbParameter CreateParameter(string name)
+        {
+            return creator.CreateParameter(name);
         }
     }
 }

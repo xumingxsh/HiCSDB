@@ -33,9 +33,13 @@ namespace HiCSDB
             return new MySqlDataAdapter();
         }
 
-        public DbParameter CreateParameter(string name, object value)
+        public DbParameter CreateParameter(string name, object value, bool isOut = false)
         {
-            return DBCreatorHelper.CreateParameter<MySqlParameter>(name, value);
+            return DBCreatorHelper.CreateParameter<MySqlParameter>(name, value, isOut);
+        }
+        public DbParameter CreateParameter(string name)
+        {
+            return DBCreatorHelper.CreateParameter<MySqlParameter>(name);
         }
 
         public DbParameter CreateParameter4DataTable(string name, string source)
