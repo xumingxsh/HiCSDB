@@ -9,7 +9,9 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using System.Data.Common;
 
-namespace HiCSDB
+using HiCSDB;
+
+namespace HiCSDBTest
 {
     /// <summary>
     /// SqlServer数据库操作实现。

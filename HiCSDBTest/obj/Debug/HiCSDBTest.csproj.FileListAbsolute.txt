@@ -1,0 +1,9 @@
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\obj\Debug\HiCSDBTest.csprojResolveAssemblyReference.cache
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\HiCSDBTest.dll
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\HiCSDBTest.pdb
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\HiCSDB.dll
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\MySql.Data.dll
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\HiCSDB.pdb
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\bin\Debug\HiCSDB.xml
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\obj\Debug\HiCSDBTest.dll
+E:\xuminrong\GitHub\xmr\HiCSDB\HiCSDBTest\obj\Debug\HiCSDBTest.pdb

@@ -14,10 +14,11 @@ namespace HiCSDB
 {
     /// <summary>
     /// 数据库操作抽象类。
+    /// 2016-05-01 添加IDispose的支持，在退出时，关闭数据库连接，防止有过时未关闭的连接
     /// </summary>
     /// <author>天志</author>
     /// <log date="2007-04-05">创建</log>
-    public sealed partial class DBOperate
+    public sealed partial class DBOperate: IDisposable 
     {
         /// <summary>
         /// SQL SERVER
@@ -28,11 +29,6 @@ namespace HiCSDB
         /// OLEDB数据库。
         /// </summary>
         public const int OLEDB = 2;
-
-        /// <summary>
-        /// MySQL数据库。
-        /// </summary>
-        public const int MySQL = 4;
 
         /// <summary>
         /// Oracle数据库。
@@ -46,13 +42,40 @@ namespace HiCSDB
         /// <returns>true：成功，提交；false：失败，回滚</returns>
         public delegate bool TransHandler(DBOperate oper);
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="connStr"></param>
+        /// <param name="iDBType"></param>
+        /// <param name="isCloseAfterExecute"></param>
         public DBOperate(string connStr, int iDBType, bool isCloseAfterExecute = true)
         {
-            this.IsCloseAfterExecute = isCloseAfterExecute;
-            this.creator = DBFactory.GetCreator(iDBType);
-            this.connString = connStr;
-            this.dbType = iDBType;
-            this.conn = creator.CreateConn(connStr);
+            IsCloseAfterExecute = isCloseAfterExecute;
+            creator = GetCreator(iDBType);
+            connString = connStr;
+            dbType = iDBType;
+            if (creator != null)
+            {
+                conn = creator.CreateConn(connStr);
+            }
+        }
+
+        /// <summary>
+        /// 对象释放时，关闭数据库连接
+        /// 该方法未考虑多线程安全
+        /// </summary>
+        public void Dispose()
+        {
+            
+            if (this.IsCloseAfterExecute)
+            {
+                return;
+            }
+            if (conn == null)
+            {
+                return;
+            }
+            Close();
         }
 
         /// <summary>
@@ -94,7 +117,12 @@ namespace HiCSDB
 				// 目的是避免多线程访问时，conn成员被多次打开，
 				// 或不该关闭时关闭  徐敏荣 2016-03-17
 				if (!this.IsCloseAfterExecute)
-				{
+                {
+                    if (conn == null)
+                    {
+                        throw new Exception(string.Format("the database type({0}) is can't support,please call AddDBCreator<T>(int dbType) function set it's creator", dbType));
+                    }
+
 					return conn;
 				}
 				else

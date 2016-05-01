@@ -8,23 +8,22 @@ using HiCSDB;
 
 namespace HiCSDBTest
 {
-    /// <summary>
-    /// 2016-05-01 MySQL相关程序已经从库中移除,可以铜鼓实现IDBCreator对其提供支持
-    /// </summary>
     [TestClass]
     public class UnitTestDBOperate_MySQL
     {
-        /*
+        const int MySQL = 4;
         private string connString = "";
         public UnitTestDBOperate_MySQL()
         {
             connString = "Server=127.0.0.1;port=3306;Database=information_schema;Uid=root;Pwd=root;";
+
+            DBOperate.AddDBCreator<MySQLCreator>(MySQL);
         }
         
         [TestMethod]
         public void Test_ExecuteDataTable()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             DataTable dt = db.ExecuteDataTable("select table_name from tables limit 10");
             Assert.IsTrue(dt != null);
             Assert.IsTrue(dt.Rows.Count > 0);
@@ -33,7 +32,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_ExecuteScalar()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             object obj = db.ExecuteScalar("select table_name from tables limit 1");
             Assert.IsTrue(obj != null);
             Assert.IsTrue(obj is String);
@@ -42,7 +41,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_ExecuteTrans()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             db.OnTran((DBOperate op)=>{
                 object val = op.ExecuteScalar("Select Count(1) from tables where table_name='CHARACTER_SETS'");
                 Assert.IsTrue(Convert.ToInt16(val) == 1);
@@ -80,7 +79,7 @@ namespace HiCSDBTest
             string insert_format = "insert into mulity_test(name,typeid) values(@name,@typeid)";
             string update_format = "update mulity_test set name=@name where typeid=@typeid";
             string count_update = "select Count(1) from mulity_test where name like '%_XXXXX'";
-            DBOperate db = new DBOperate(conn, DBOperate.MySQL, false);
+            DBOperate db = new DBOperate(conn, MySQL, false);
             int ret = db.ExecuteNonQuery(drop);
             ret = db.ExecuteNonQuery(sql);
             object val = db.ExecuteScalar("select count(1) from mulity_test where id=0");
@@ -183,7 +182,7 @@ namespace HiCSDBTest
             string drop = "drop table if exists mulity_test";
             string count_sql = "select count(1) from mulity_test";
             string info = "insert {0} to table({1}),time span:{2}";
-            DBOperate db = new DBOperate(conn, DBOperate.MySQL, false);
+            DBOperate db = new DBOperate(conn, MySQL, false);
             int ret = db.ExecuteNonQuery(drop);
             ret = db.ExecuteNonQuery(sql);
             object val = db.ExecuteScalar("select count(1) from mulity_test where id=0");
@@ -225,7 +224,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             DbParameter[] parmter = new DbParameter[1];
             parmter[0] = db.CreateParameter("table_name", "CHARACTER_SETS");
             object obj = db.ExecuteScalar("select table_name from tables where table_name=?table_name", parmter);
@@ -237,7 +236,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params_DataRow()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             DataTable dt = new DataTable();
             dt.Columns.Add("table_name");
             DataRow dr = dt.Rows.Add();
@@ -252,7 +251,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params_DataTable()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             DataTable dt = new DataTable();
             dt.Columns.Add("table_name");
             DataRow dr = dt.Rows.Add();
@@ -267,7 +266,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params_Dictory()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             IDictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("table_name", "CHARACTER_SETS");
             DbParameter[] parmter = DBParamHelper.CreateParameters(db, dic);
@@ -280,7 +279,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params_HashTable()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             Hashtable hs = new Hashtable();
             hs.Add("table_name", "CHARACTER_SETS");
             DbParameter[] parmter = DBParamHelper.CreateParameters(db, hs);
@@ -293,7 +292,7 @@ namespace HiCSDBTest
         [TestMethod]
         public void Test_Params_Other()
         {
-            DBOperate db = new DBOperate(connString, DBOperate.MySQL);
+            DBOperate db = new DBOperate(connString, MySQL);
             Hashtable hs = new Hashtable();
             hs.Add("table_name", "CHARACTER_SETS");
             try
@@ -308,16 +307,5 @@ namespace HiCSDBTest
                 Assert.IsTrue(true);
             }
         }
-
-        [TestMethod]
-        public void Test_ExcelQuery()
-        {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "/edqdb.xls";
-            string conn = "Provider=Microsoft.Jet.OLEDB.4.0;Extended Properties=Excel 8.0;data source=" + path;
-            DBOperate db = new DBOperate(conn, DBOperate.OLEDB);
-
-            DataTable dt = db.ExecuteDataTable("Select * from [ProductProcess$]");
-            Assert.IsTrue(dt.Rows.Count > 0);
-        }*/
     }
 }
