@@ -15,6 +15,8 @@ namespace HiCSDB
 {
     /// <summary>
     /// 数据库操作抽象类。
+    /// 2016-05-02 删除BatchUpdate接口(批量更新DataTable数据),
+    ///     该接口为非常用接口,不再提供支持
     /// </summary>
     /// <author>天志</author>
     /// <log date="2007-04-05">创建</log>
@@ -184,84 +186,6 @@ namespace HiCSDB
             finally
             {
                 OnExecuteFinish(connection, da.SelectCommand);
-            }
-        }
-
-        /// <summary>
-        /// 批量更新
-        /// </summary>
-        /// <param name="dt">存储数据的DataTable</param>
-        /// <param name="sql">SQL模板（含参数）</param>
-        /// <param name="paramers">SQL参数与DataTable列的对应集合</param>
-        public void BatchUpdate(DataTable dt, string sql, IDictionary<string, string> paramers)
-        {
-            if (dt == null || string.IsNullOrWhiteSpace(sql))
-            {
-                return;
-            }
-			DbConnection connection = this.Conn;
-			
-            // 初始化一个command对象
-            DbCommand cmd = connection.CreateCommand();
-            cmd.CommandText = sql;
-
-            cmd.CommandType = UtilHelper.GetCommandType(sql);
-
-            //指定各个参数的取值
-            foreach (var it in paramers)
-            {
-                DbParameter param = creator.CreateParameter4DataTable(it.Key, it.Value);
-                cmd.Parameters.Add(param);
-            }
-
-            DbDataAdapter adapter = creator.CreateDataAdapter();
-
-
-            bool isAdd = false;
-            string lowSql = sql.ToLower().Trim();
-            if (lowSql.StartsWith("insert "))
-            {
-                adapter.InsertCommand = cmd;
-                isAdd = true;
-            }
-            else if (lowSql.StartsWith("update "))
-            {
-                adapter.UpdateCommand = cmd;
-            }
-            else
-            {
-                throw new Exception("BatchUpdate function support sql start with insert or update");
-            }
-
-            foreach (DataRow it in dt.Rows)
-            {
-                it.AcceptChanges();
-                if (isAdd)
-                {
-                    it.SetAdded();
-                }
-                else
-                {
-                    it.SetModified();
-                }
-            }
-            try
-            {
-                //执行更新
-                adapter.Update(dt.GetChanges());
-                //使DataTable保存更新
-                dt.AcceptChanges();
-            }
-            finally
-            {
-                if (isAdd)
-                {
-                    OnExecuteFinish(connection, adapter.InsertCommand);
-                }
-                else
-                {
-                    OnExecuteFinish(connection, adapter.UpdateCommand);
-                }
             }
         }
     }

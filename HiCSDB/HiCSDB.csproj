@@ -68,13 +68,13 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dbfactory\impl\OleDBCreator.cs" />
+    <Compile Include="dboper\Creator\Impl\OleDBCreator.cs" />
     <Compile Include="dboper\DBOperate4Static.cs" />
     <Compile Include="dboper\DBOperate4Trans.cs" />
-    <Compile Include="dbfactory\IDBCreator.cs" />
-    <Compile Include="dbfactory\impl\OracleCreator.cs" />
+    <Compile Include="dboper\Creator\IDBCreator.cs" />
+    <Compile Include="dboper\Creator\Impl\OracleCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="dbfactory\impl\SqlServerCreator.cs" />
+    <Compile Include="dboper\Creator\Impl\SqlServerCreator.cs" />
     <Compile Include="dboper\DBOperate4Execute.cs" />
     <Compile Include="dboper\DBOperate4Command.cs" />
     <Compile Include="test\UnitTestDBOperate_MySQL.cs" />

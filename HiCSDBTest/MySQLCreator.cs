@@ -43,10 +43,5 @@ namespace HiCSDBTest
         {
             return DBCreatorHelper.CreateParameter<MySqlParameter>(name);
         }
-
-        public DbParameter CreateParameter4DataTable(string name, string source)
-        {
-            return DBCreatorHelper.CreateParameter4DataTable<MySqlParameter>(name, source);
-        }
     }
 }
