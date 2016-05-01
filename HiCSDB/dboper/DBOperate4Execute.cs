@@ -28,11 +28,15 @@ namespace HiCSDB
         /// <summary>
         /// 执行添加，修改，删除之类的操作。
         /// </summary>
-        /// <param name="strSql">sql语句名称</param>
+        /// <param name="sql">sql语句名称</param>
         /// <param name="parameters">参数数组</param>
         /// <returns>受影响的条数</returns>
         public int ExecuteNonQuery(string sql, DbParameter[] parameters = null)
         {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                return -1;
+            }
 			DbConnection connection = this.Conn;
 			
             DbCommand cmdSql = this.GetPreCommand(connection, sql, parameters);
@@ -58,6 +62,10 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public object ExecuteScalar(string sql, DbParameter[] parameters = null)
         {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                return null;
+            }
 			DbConnection connection = this.Conn;
 				
             //初始化一个command对象
@@ -85,6 +93,10 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public IDataReader ExecuteReader(string sql, DbParameter[] parameters = null)
         {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                return null;
+            }
 			DbConnection connection = this.Conn;
 			
             //初始化一个command对象
@@ -115,6 +127,10 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public DataTable ExecuteDataTable(string sql, DbParameter[] parameters = null)
         {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                return null;
+            }
             //初始化一个DataAdapter对象，一个DataTable对象
             DataTable dt = new DataTable();
 			
@@ -147,6 +163,10 @@ namespace HiCSDB
         /// <log date="2007-04-05">创建</log>
         public DataSet ExecuteDataSet(string sql, DbParameter[] parameters = null)
         {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                return null;
+            }
             //初始化一个DataSet对象，一个DataAdapter对象
             DataSet ds = new DataSet();
 			
@@ -175,7 +195,7 @@ namespace HiCSDB
         /// <param name="paramers">SQL参数与DataTable列的对应集合</param>
         public void BatchUpdate(DataTable dt, string sql, IDictionary<string, string> paramers)
         {
-            if (dt == null || sql == null)
+            if (dt == null || string.IsNullOrWhiteSpace(sql))
             {
                 return;
             }

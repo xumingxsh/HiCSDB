@@ -15,10 +15,11 @@ namespace HiCSDB
     /// <summary>
     /// 数据库操作抽象类。
     /// 2016-05-01 添加IDispose的支持，在退出时，关闭数据库连接，防止有过时未关闭的连接
+    /// 2016-05-01 添加Dispose支持的十几分钟后有去除了,因为担心引起垃圾的第二次回收
     /// </summary>
     /// <author>天志</author>
     /// <log date="2007-04-05">创建</log>
-    public sealed partial class DBOperate: IDisposable 
+    public sealed partial class DBOperate//: IDisposable 
     {
         /// <summary>
         /// SQL SERVER
@@ -58,24 +59,6 @@ namespace HiCSDB
             {
                 conn = creator.CreateConn(connStr);
             }
-        }
-
-        /// <summary>
-        /// 对象释放时，关闭数据库连接
-        /// 该方法未考虑多线程安全
-        /// </summary>
-        public void Dispose()
-        {
-            
-            if (this.IsCloseAfterExecute)
-            {
-                return;
-            }
-            if (conn == null)
-            {
-                return;
-            }
-            Close();
         }
 
         /// <summary>
