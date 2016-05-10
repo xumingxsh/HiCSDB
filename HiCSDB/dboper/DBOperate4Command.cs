@@ -1,9 +1,3 @@
-/// <copyright>天志（六子）  1999-2007</copyright>
-/// <version>1.0</version>
-/// <author>天志</author>
-/// <email></email>
-/// <log date="2007-04-05">创建</log>
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,11 +14,6 @@ namespace HiCSDB
     /// <log date="2007-04-05">创建</log>
     partial class DBOperate
     {
-        /// <summary>
-        /// 向命令对象添加参数
-        /// </summary>
-        /// <param name="cmd">命令对象</param>
-        /// <param name="parameters">参数数组</param>
         private void AddCmdParaers(DbCommand cmd, DbParameter[] parameters)
         {
             if (parameters == null)
@@ -38,13 +27,7 @@ namespace HiCSDB
                 cmd.Parameters.Add(sqlParm);
             }
         }
-        /// <summary>
-        /// 获取一个OdbcCommand对象
-        /// </summary>
-        /// <param name="strSql">sql语句名称</param>
-        /// <param name="parameters">参数数组</param>
-        /// <param name="strCommandType">命令类型</param>
-        /// <returns>OdbcCommand对象</returns>
+
         private DbCommand GetPreCommand(DbConnection connection, string sql, DbParameter[] parameters)
         {
             // 初始化一个command对象
@@ -58,11 +41,6 @@ namespace HiCSDB
             return cmdSql;
         }
 
-        /// <summary>
-        /// 创建适配器
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
         private DbDataAdapter CreateDataAdapter(DbConnection connection, string sql)
         {
             return creator.CreateDataAdapter(connection, sql);

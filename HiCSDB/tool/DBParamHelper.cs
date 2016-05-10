@@ -14,7 +14,7 @@ namespace HiCSDB
         /// <summary>
         /// 根据哈希表生成参数数组。
         /// </summary>
-        /// <param name="paramDict"></param>
+        /// <param name="db"></param>
         /// <param name="hash"></param>
         /// <returns></returns>
         public static DbParameter[] CreateParameters(DBOperate db, Hashtable hash)

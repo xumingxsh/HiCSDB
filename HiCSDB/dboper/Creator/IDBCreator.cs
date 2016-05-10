@@ -26,8 +26,6 @@ namespace HiCSDB
         /// <summary>
         /// 创建适配器
         /// </summary>
-        /// <param name="conn"></param>
-        /// <param name="sql"></param>
         /// <returns></returns>
         DbDataAdapter CreateDataAdapter();
 
@@ -36,6 +34,7 @@ namespace HiCSDB
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
+        /// <param name="isOut"></param>
         /// <returns></returns>
         DbParameter CreateParameter(string name, object value, bool isOut = false);
 

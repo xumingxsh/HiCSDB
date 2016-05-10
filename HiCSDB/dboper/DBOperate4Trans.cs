@@ -1,9 +1,3 @@
-/// <copyright>天志（六子）  1999-2007</copyright>
-/// <version>1.0</version>
-/// <author>天志</author>
-/// <email></email>
-/// <log date="2007-04-05">创建</log>
-
 using System;
 using System.Data;
 using System.Data.Common;
@@ -30,11 +24,6 @@ namespace HiCSDB
         /// OLEDB数据库。
         /// </summary>
         public const int OLEDB = 2;
-
-        /// <summary>
-        /// Oracle数据库。
-        /// </summary>
-        public const int ORACLE = 6;
 
         /// <summary>
         /// 执行事务的函数
@@ -124,11 +113,6 @@ namespace HiCSDB
             }
         }
 
-        /// <summary>
-        /// 打开数据库连接
-        /// </summary>
-        /// <author>天志</author>
-        /// <log date="2007-04-05">创建</log>
         private void Open(DbConnection connection)
         {
             if (connection.State.Equals(ConnectionState.Closed))

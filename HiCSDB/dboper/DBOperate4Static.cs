@@ -60,7 +60,6 @@ creator is ({1}),so you can,t set it", dbType, it.GetType().ToString()));
                     if (dic.Count < 1)
                     {
                         dic[MSSQLSERVER] = Creator<SqlServerCreator>;
-                        dic[ORACLE] = Creator<OracleCreator>;
                         dic[OLEDB] = Creator<OleDBCreator>;
                     }
                 }

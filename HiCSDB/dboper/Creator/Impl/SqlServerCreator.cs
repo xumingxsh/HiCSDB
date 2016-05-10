@@ -1,9 +1,3 @@
-/// <copyright>天志（六子）  1999-2007</copyright>
-/// <version>1.0</version>
-/// <author>天志</author>
-/// <email></email>
-/// <log date="2007-04-05">创建</log>
-
 using System;
 using System.Data.SqlClient;
 using System.Data.OleDb;

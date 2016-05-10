@@ -1,9 +1,3 @@
-/// <copyright>天志（六子）  1999-2007</copyright>
-/// <version>1.0</version>
-/// <author>天志</author>
-/// <email></email>
-/// <log date="2007-04-05">创建</log>
-
 using System;
 using System.Data;
 using System.Data.Common;
@@ -159,7 +153,6 @@ namespace HiCSDB
         /// </summary>
         /// <param name="sql">sql语句名称</param>
         /// <param name="parameters">参数数组</param>
-        /// <param name="strTableName">操作表的名称</param>
         /// <returns>DataSet对象</returns>
         /// <author>天志</author>
         /// <log date="2007-04-05">创建</log>

@@ -59,10 +59,8 @@
     <DocumentationFile>bin\Release\HiCSDB.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
@@ -72,12 +70,10 @@
     <Compile Include="dboper\DBOperate4Static.cs" />
     <Compile Include="dboper\DBOperate4Trans.cs" />
     <Compile Include="dboper\Creator\IDBCreator.cs" />
-    <Compile Include="dboper\Creator\Impl\OracleCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="dboper\Creator\Impl\SqlServerCreator.cs" />
     <Compile Include="dboper\DBOperate4Execute.cs" />
     <Compile Include="dboper\DBOperate4Command.cs" />
-    <Compile Include="test\UnitTestDBOperate_MySQL.cs" />
     <Compile Include="tool\DBParamHelper.cs" />
     <Compile Include="tool\UtilHelper.cs" />
   </ItemGroup>
@@ -100,6 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
