@@ -26,13 +26,6 @@ namespace HiCSDB
         public const int OLEDB = 2;
 
         /// <summary>
-        /// 执行事务的函数
-        /// </summary>
-        /// <param name="oper">数据库访问对象</param>
-        /// <returns>true：成功，提交；false：失败，回滚</returns>
-        public delegate bool TransHandler(DBOperate oper);
-
-        /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="connStr"></param>
@@ -64,7 +57,7 @@ namespace HiCSDB
         /// 执行事务（注意使用该函数会生成一个新的数据库操作对象病连接，在事务执行后，会关闭连接）
         /// </summary>
         /// <param name="handler">事务执行函数</param>
-        public void OnTran(TransHandler handler)
+        public void OnTran(Func<DBOperate, bool> handler)
         {
             DBOperate db = null;
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
