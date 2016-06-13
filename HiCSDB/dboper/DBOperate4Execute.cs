@@ -133,6 +133,7 @@ namespace HiCSDB
 			DbConnection connection = this.Conn;			
             DbDataAdapter da = this.CreateDataAdapter(connection, sql);
             AddCmdParaers(da.SelectCommand, parameters);
+            da.SelectCommand.CommandType = UtilHelper.GetCommandType(sql);
 
             try
             {
