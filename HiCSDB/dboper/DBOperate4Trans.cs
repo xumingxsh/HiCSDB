@@ -73,7 +73,31 @@ namespace HiCSDB
                 db.Close();
             }
         }
-		
+
+        /// <summary>
+        /// 执行事务（注意使用该函数会生成一个新的数据库操作对象病连接，在事务执行后，会关闭连接）
+        /// </summary>
+        /// <param name="handler">事务执行函数</param>
+        public bool OnTranEx(Func<DBOperate, bool> handler)
+        {
+            bool isok = false;
+            DBOperate db = null;
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
+            {
+                db = new DBOperate(connString, dbType, false);
+                if (handler(db))
+                {
+                    scope.Complete();
+                    isok = true;
+                }
+            }
+            if (db != null)
+            {
+                db.Close();
+            }
+            return isok;
+        }
+
 		private DbConnection Conn
 		{
 			get
