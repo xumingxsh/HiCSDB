@@ -53,24 +53,43 @@ namespace HiCSDB
 			this.Close(conn);
         }
 
+        private DbTransaction trans = null;
+
         /// <summary>
         /// 执行事务（注意使用该函数会生成一个新的数据库操作对象病连接，在事务执行后，会关闭连接）
         /// </summary>
         /// <param name="handler">事务执行函数</param>
         public void OnTran(Func<DBOperate, bool> handler)
         {
-            DBOperate db = null;
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
+            DBOperate db = new DBOperate(connString, dbType, false);
+            if (db.Conn == null)
             {
-                db = new DBOperate(connString, dbType, false);
-                if (handler(db))
-                {
-                    scope.Complete();
-                }
+                return;
             }
-            if (db != null)
+            
+            try
+            {
+                db.Conn.Open();
+                db.trans = db.Conn.BeginTransaction();
+                if (db.trans == null)
+                {
+                    return;
+                }
+                handler(db);
+                db.trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (db.trans != null)
+                {
+                    db.trans.Rollback();
+                }
+                throw ex;
+            }
+            finally
             {
                 db.Close();
+                db = null;
             }
         }
 
@@ -80,46 +99,72 @@ namespace HiCSDB
         /// <param name="handler">事务执行函数</param>
         public bool OnTranEx(Func<DBOperate, bool> handler)
         {
-            bool isok = false;
-            DBOperate db = null;
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
+            DBOperate db = new DBOperate(connString, dbType, false);
+            if (db.Conn == null)
             {
-                db = new DBOperate(connString, dbType, false);
+                return false;
+            }
+            
+            try
+            {
+                db.Conn.Open();
+                db.trans = db.Conn.BeginTransaction();
+                if (db.trans == null)
+                {
+                    return false;
+                }
                 if (handler(db))
                 {
-                    scope.Complete();
-                    isok = true;
+                    db.trans.Commit();
+                    return true;
                 }
+                db.trans.Rollback();
+                return false;
             }
-            if (db != null)
+            catch(Exception ex)
+            {
+                if (db.trans != null)
+                {
+                    db.trans.Rollback();
+                }
+                throw ex;
+            }
+            finally
             {
                 db.Close();
+                db = null;
             }
-            return isok;
         }
 
 		private DbConnection Conn
-		{
-			get
-			{
-				// 如果用完即关闭，则每次访问时，创建新的连接，
-				// 目的是避免多线程访问时，conn成员被多次打开，
-				// 或不该关闭时关闭  徐敏荣 2016-03-17
-				if (!this.IsCloseAfterExecute)
+        {
+            get
+            {
+                // 如果用完即关闭，则每次访问时，创建新的连接，
+                // 目的是避免多线程访问时，conn成员被多次打开，
+                // 或不该关闭时关闭  徐敏荣 2016-03-17
+                if (!this.IsCloseAfterExecute)
                 {
                     if (conn == null)
                     {
-                        throw new Exception(string.Format("the database type({0}) is can't support,please call AddDBCreator<T>(int dbType) function set it's creator", dbType));
+                        if (creator != null)
+                        {
+                            conn = creator.CreateConn(connString);
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("the database type({0}) is can't support,please call AddDBCreator<T>(int dbType) function set it's creator", dbType));
+                        }
                     }
 
-					return conn;
-				}
-				else
-				{
-					DbConnection connection = creator.CreateConn(connString);
-					return connection;
-				}
-			}
+                    return conn;
+                }
+                else
+                {
+                    DbConnection connection = creator.CreateConn(connString);
+                    return connection;
+                }
+            }
 		}
 
         private void CloseAfterExecute(DbConnection connection)

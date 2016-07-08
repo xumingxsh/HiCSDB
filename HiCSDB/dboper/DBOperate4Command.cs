@@ -36,6 +36,11 @@ namespace HiCSDB
 
             cmdSql.CommandType = UtilHelper.GetCommandType(sql);
 
+            if (trans != null)
+            {
+                cmdSql.Transaction = trans;
+            }
+
             AddCmdParaers(cmdSql, parameters);
 
             return cmdSql;
