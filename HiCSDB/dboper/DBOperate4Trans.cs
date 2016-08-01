@@ -37,10 +37,6 @@ namespace HiCSDB
             creator = GetCreator(iDBType);
             connString = connStr;
             dbType = iDBType;
-            if (creator != null)
-            {
-                conn = creator.CreateConn(connStr);
-            }
         }
 
         /// <summary>
@@ -52,7 +48,7 @@ namespace HiCSDB
         {
 			this.Close(conn);
         }
-
+        
         private DbTransaction trans = null;
 
         /// <summary>
@@ -66,7 +62,7 @@ namespace HiCSDB
             {
                 return;
             }
-            
+
             try
             {
                 db.Conn.Open();
@@ -104,7 +100,7 @@ namespace HiCSDB
             {
                 return false;
             }
-            
+
             try
             {
                 db.Conn.Open();
@@ -121,7 +117,7 @@ namespace HiCSDB
                 db.trans.Rollback();
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (db.trans != null)
                 {
@@ -136,14 +132,15 @@ namespace HiCSDB
             }
         }
 
+		
 		private DbConnection Conn
-        {
-            get
-            {
-                // 如果用完即关闭，则每次访问时，创建新的连接，
-                // 目的是避免多线程访问时，conn成员被多次打开，
-                // 或不该关闭时关闭  徐敏荣 2016-03-17
-                if (!this.IsCloseAfterExecute)
+		{
+			get
+			{
+				// 如果用完即关闭，则每次访问时，创建新的连接，
+				// 目的是避免多线程访问时，conn成员被多次打开，
+				// 或不该关闭时关闭  徐敏荣 2016-03-17
+				if (!this.IsCloseAfterExecute)
                 {
                     if (conn == null)
                     {
@@ -157,15 +154,16 @@ namespace HiCSDB
                         }
                     }
 
-                    return conn;
-                }
-                else
-                {
-                    DbConnection connection = creator.CreateConn(connString);
-                    return connection;
-                }
-            }
+					return conn;
+				}
+				else
+				{
+					DbConnection connection = creator.CreateConn(connString);
+					return connection;
+				}
+			}
 		}
+
 
         private void CloseAfterExecute(DbConnection connection)
         {

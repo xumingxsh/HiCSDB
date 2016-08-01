@@ -135,6 +135,11 @@ namespace HiCSDB
             AddCmdParaers(da.SelectCommand, parameters);
             da.SelectCommand.CommandType = UtilHelper.GetCommandType(sql);
 
+            if (trans != null)
+            {
+                da.SelectCommand.Transaction = trans;
+            }
+
             try
             {
                 // 打开数据库连接
@@ -169,6 +174,10 @@ namespace HiCSDB
 			DbConnection connection = this.Conn;	
             DbDataAdapter da = this.CreateDataAdapter(connection, sql);
             AddCmdParaers(da.SelectCommand, parameters);
+            if (trans != null)
+            {
+                da.SelectCommand.Transaction = trans;
+            }
 
             try
             {

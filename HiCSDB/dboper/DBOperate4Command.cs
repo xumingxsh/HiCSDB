@@ -35,7 +35,6 @@ namespace HiCSDB
             cmdSql.CommandText = sql;
 
             cmdSql.CommandType = UtilHelper.GetCommandType(sql);
-
             if (trans != null)
             {
                 cmdSql.Transaction = trans;
